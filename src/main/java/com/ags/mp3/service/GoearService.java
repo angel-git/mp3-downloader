@@ -35,16 +35,11 @@ public class GoearService {
         String htmlDownload = goearConnector.doPost("url_goear=" + encode + "&descargar=Descargar+canci%C3%B3n");
         String linkTracked = this.getLinkTracker(htmlDownload);
 
-        String xml = goearConnector.doGet(linkTracked);
-
-        Document document = Jsoup.parse(xml);
-        String mp3Url = this.getSongUrl(document);
-        String fileName = this.getSongName(document);
-
-        mp3Downloader.saveMp3(mp3Url,musicPath,fileName);
+        String songName = goearUrl.substring(goearUrl.lastIndexOf("/")+1, goearUrl.length());
+        mp3Downloader.saveMp3(linkTracked,musicPath, songName);
 
         System.out.println("");
-        System.out.println("Mp3 downloaded: "+fileName);
+        System.out.println("Mp3 downloaded: "+songName);
     }
 
     private String getLinkTracker(String html) {
@@ -52,10 +47,4 @@ public class GoearService {
         return document.getElementById("links").getElementsByTag("a").get(0).attr("href");
     }
 
-    private String getSongName(Document document) {
-        return document.getElementsByAttribute("path").get(0).attr("title");
-    }
-    private String getSongUrl(Document document) {
-        return document.getElementsByAttribute("path").get(0).attr("path");
-    }
 }
