@@ -1,14 +1,10 @@
 package com.ags.mp3.service;
 
-import com.ags.mp3.connetor.HttpGoearConnector;
 import com.ags.mp3.downloader.Mp3Downloader;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 /**
  * Created with IntelliJ IDEA.
@@ -19,24 +15,22 @@ import java.net.URLEncoder;
  */
 public class GoearService {
 
-    private HttpGoearConnector goearConnector;
     private Mp3Downloader mp3Downloader;
     private String musicPath;
 
+    private final static String GOEAR_URL = "http://www.goear.com/action/sound/get";
+
 
     public GoearService(String musicPath) {
-        this.goearConnector = new HttpGoearConnector("http://downmusic.org/download-music-from-goear.php");
         this.mp3Downloader = new Mp3Downloader();
         this.musicPath = musicPath;
     }
 
     public void downloadMp3(String goearUrl) throws IOException {
-        String encode = URLEncoder.encode(goearUrl, "UTF-8");
-        String htmlDownload = goearConnector.doPost("url_goear=" + encode + "&descargar=Descargar+canci%C3%B3n");
-        String linkTracked = this.getLinkTracker(htmlDownload);
-
+        String linkTracked = goearUrl.substring(0, goearUrl.lastIndexOf("/"));
+        String linkGood = linkTracked.substring(linkTracked.lastIndexOf("/"),linkTracked.length());
         String songName = goearUrl.substring(goearUrl.lastIndexOf("/")+1, goearUrl.length());
-        mp3Downloader.saveMp3(linkTracked,musicPath, songName);
+        mp3Downloader.saveMp3(GOEAR_URL+linkGood,musicPath, songName);
 
         System.out.println("");
         System.out.println("Mp3 downloaded: "+songName);

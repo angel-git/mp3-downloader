@@ -58,6 +58,7 @@ public class Launcher {
             goearService.downloadMp3(link);
         } catch (IOException e) {
             System.out.println("UUUUPSSSSS connection lost or somehitng :(");
+            System.out.println(e.getMessage());
         } finally {
             showMenu();
         }
